@@ -1,15 +1,5 @@
 from __future__ import print_function
-import time
 import openadk
-from openadk.rest import ApiException
-from pprint import pprint
-
-robo_ip = '10.220.5.226' # Change to robot API
-
-# create an instance of the API class
-configuration = openadk.Configuration()
-configuration.host = f'http://{robo_ip}:9090/v1'
-api_instance = openadk.SensorsApi(openadk.ApiClient(configuration)) # Change API options
 
 angle_offset = 20.0
 
@@ -17,7 +7,10 @@ angle_offset = 20.0
 turn_right = 36.2
 turn_left = 15.5
 
-def getSensorResponse(api_instance):
+def getSensorResponse(robo_ip):
+    configuration = openadk.Configuration()
+    configuration.host = f'http://{robo_ip}:9090/v1'
+    api_instance = openadk.SensorsApi(openadk.ApiClient(configuration))  # Change API options
     api_response = api_instance.get_sensors_gyro()
     return api_response
 

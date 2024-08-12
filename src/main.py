@@ -8,8 +8,8 @@ import distance_processing as dpr
 import offset_processing as offset
 import motion_processing as motion
 
-robot_api = '10.220.5.226'
-url = f'http://{robot_api}:8000/stream.mjpg'
+robot_ip = '10.220.5.230'
+url = f'http://{robot_ip}:8000/stream.mjpg'
 
 #Biến thời gian
 last_time = time.time()
@@ -27,6 +27,7 @@ notFoundObject = 0
 isStop = False
 
 def measure_offset(frame):
+    global robot_ip
     global isGetAngle
     global origin_z
     global notFoundObject
@@ -70,7 +71,7 @@ def measure_offset(frame):
             # Kiểm tra diện tích của vùng màu đỏ
             area = cv2.contourArea(contour)
             if area > 500:  # Giảm diện tích tối thiểu để phát hiện
-                z = angle.getAngle(angle.getSensorResponse(angle.api_instance))
+                z = angle.getAngle(angle.getSensorResponse(robot_ip))
 
                 # Lấy góc nguyên bản hoặc trả về góc hiện tại
                 if not isGetAngle:
@@ -137,7 +138,7 @@ if __name__ == '__main__':
         current_time = time.time()
 
         frame = measure_response['frame']
-        mask = measure_response['mask']
+        # mask = measure_response['mask']
 
         #Kiểm tra vị trí và xử lý mỗi một khoảng thời gian
         if current_time - last_time >= pause_time:
@@ -148,7 +149,7 @@ if __name__ == '__main__':
 
             offset_x = measure_response['offset_x'] if 'offset_x' in measure_response else 0
             distance = measure_response['distance'] if 'distance' in measure_response else dpr.distance_accept
-            z = angle.getAngle(angle.getSensorResponse(angle.api_instance))
+            z = angle.getAngle(angle.getSensorResponse(robot_ip))
 
             angle_response = angle.isAccept(z, origin_z)
             angleAccept = angle_response['isAccept']
@@ -196,7 +197,7 @@ if __name__ == '__main__':
 
         # Hiển thị khung hình và mặt nạ
         cv2.imshow('Frame', frame)
-        cv2.imshow('Mask', mask)
+        # cv2.imshow('Mask', mask)
 
 
         # Nhấn 'q' để thoát
